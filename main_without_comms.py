@@ -9,7 +9,7 @@ import numpy as np
 x_train = x_train/255.0
 x_test = x_test/255.0
 
-model = keras.models.load_model('model.h5')
+#model = keras.models.load_model('model.h5')
 
 model = keras.Sequential([
 	keras.layers.Flatten(input_shape=(28,28)),
@@ -21,11 +21,12 @@ model = keras.Sequential([
 model.compile(optimizer="adam", loss="sparse_categorical_crossentropy", metrics=["accuracy"])
 model.fit(x_train, y_train, epochs=5)
 
-model.save("model.h5")
+#model.save("model.h5")
 
 test_loss, test_acc = model.evaluate(x_test, y_test)
 
-print(f'\nTest accuracy: {round((test_acc*100), 1)}\n')
+print(x_train.shape, x_test.shape, y_train.shape, y_test.shape)
+
 
 predictions = model.predict(x_test)
 

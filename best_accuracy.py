@@ -1,3 +1,11 @@
+import tensorflow as tf
+from tensorflow import keras
+from keras.models import Sequential
+from keras.layers import Conv2D, MaxPool2D, Dense, BatchNormalization, Flatten, Dropout
+from keras.callbacks import TensorBoard
+from sklearn import model_selection
+import matplotlib.pyplot as plt
+import numpy as np
 # Importing tensorflow
 import tensorflow as tf
 # Importing keras from tensorflow
@@ -20,28 +28,44 @@ x_train = x_train/255.0
 x_test = x_test/255.0
 
 # Loading our model
-model = keras.models.load_model('best_accuracy.h5')
+#model = keras.models.load_model('digit_recognition/model.h5')
 
-'''# Our Neural Network Model
-model = keras.Sequential([ # Sequential is most common one (feed forward)
-    keras.layers.Conv2D(32, (3,3), input_shape=(28,28,1), padding='same', activation='relu'),
-    keras.layers.MaxPooling2D(pool_size=(2,2)),
-    keras.layers.Conv2D(32, (3,3), padding='same', activation='relu'),
-    keras.layers.MaxPooling2D(pool_size=(2,2)),
-    # Creating input layer with shape 28x28 (shape of our image with pixels data)
-    # Flatten means that our shape 28x28 will be represented as 784 neuron
-	keras.layers.Flatten(),
-    # Dense (fully connected with weights) layer with 128 neurons and act. func. ReLU
-	keras.layers.Dense(256, activation="relu"),
-    keras.layers.Dropout(0.33),
-    keras.layers.Dense(128, activation="relu"),
-    keras.layers.Dropout(0.25),
-
-
-    # Our output Dense layer with 10 neurons (number from 0 to 9) and activation softmax
-    # softmax for output value from 0 to 1 (possibility prediction about number shown on img.)
-	keras.layers.Dense(10, activation="softmax")
-	])
+# Our Neural Network Model
+model = Sequential([
+        Conv2D(32, kernel_size=(3, 3), activation='relu', padding='same', input_shape = (28,28,1)),
+        Conv2D(32, kernel_size=(3, 3), activation='relu', padding='same'),
+        BatchNormalization(),
+        MaxPool2D(pool_size=(2, 2)),
+        Dropout(0.25),
+        
+        Conv2D(64, kernel_size=(3, 3), activation='relu', padding='same'),
+        Conv2D(64, kernel_size=(3, 3), activation='relu', padding='same' ),
+        BatchNormalization(),
+        MaxPool2D(pool_size=(2, 2)),
+        Dropout(0.25),
+        
+        Conv2D(128, kernel_size=(3, 3), activation='relu', padding='same' ),
+        Conv2D(128, kernel_size=(3, 3), activation='relu', padding='same' ),
+        BatchNormalization(),
+        MaxPool2D(pool_size=(2, 2)),
+        Dropout(0.25),
+        
+        
+        Flatten(),
+          
+        Dense(512, activation='relu'),
+        BatchNormalization(),
+        Dropout(0.5),
+        
+        Dense(256, activation='relu'),
+        BatchNormalization(),
+        Dropout(0.4),
+        
+        Dense(64, activation='relu'),
+        BatchNormalization(),
+        Dropout(0.3),
+        
+        Dense(10, activation = "softmax")])
 
 # Compiling our model
 
@@ -57,7 +81,7 @@ model.fit(x_train, y_train, epochs=5, batch_size=128)
 
 # Saving our model learning progress
 model.save("main.h5")
-# name it whatever you want but end with .h5'''
+# name it whatever you want but end with .h5
 
 # Getting test accuracy and loss by testing our model with test images and labels
 test_loss, test_acc = model.evaluate(x_test, y_test)
@@ -77,13 +101,15 @@ right_pred = 0
 # Wrong predictions
 wrong_pred = 0
 
+model.save('best_accuracy.h5')
+
 # Looping through every image
 for i in range(len(x_test)):
     # Checking if NN prediction is not right
     if np.argmax(predictions[i]) != y_test[i]:
         # Image showing
         # Configure the grid lines
-        plt.grid(False)
+        '''plt.grid(False)
         # Showing image
         plt.imshow(x_test[i], cmap=plt.cm.binary)
         # Writing number label
@@ -91,7 +117,7 @@ for i in range(len(x_test)):
         # Writing Neural Network predict
         plt.title(f'Neural Network predict: {np.argmax(predictions[i])}')
         # Showing all of that stuff
-        plt.show()
+        plt.show()'''
         # Counting wrong predictions
         wrong_pred += 1
     # Checking if right
@@ -101,3 +127,8 @@ for i in range(len(x_test)):
 
 # Printing out amount of right and wrong predictions
 print(f'\nNeural network predicted right {right_pred} times, and wrong {wrong_pred} times.\n')
+
+
+
+
+        
